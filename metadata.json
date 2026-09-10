@@ -1,0 +1,6 @@
+{
+  "name": "Baby Lion Adventure: Walk & Play",
+  "description": "An interactive safari walking game featuring an adorable baby lion cub with animal coloring, pattern matching, photo safari games, and playful rewards.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

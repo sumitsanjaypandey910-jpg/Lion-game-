@@ -1,0 +1,84 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Walking paw swing animations */
+  @keyframes pawSwingLeft {
+    0%, 100% {
+      transform: rotate(-14deg) translateY(0px);
+    }
+    50% {
+      transform: rotate(18deg) translateY(-8px);
+    }
+  }
+
+  @keyframes pawSwingRight {
+    0%, 100% {
+      transform: rotate(18deg) translateY(-8px);
+    }
+    50% {
+      transform: rotate(-14deg) translateY(0px);
+    }
+  }
+
+  @keyframes walkingBob {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    25% {
+      transform: translateY(-5px) rotate(-1.5deg);
+    }
+    75% {
+      transform: translateY(-5px) rotate(1.5deg);
+    }
+  }
+
+  @keyframes headBob {
+    0%, 100% {
+      transform: translateY(0px) rotate(0deg);
+    }
+    50% {
+      transform: translateY(-3px) rotate(1deg);
+    }
+  }
+
+  @keyframes floatCloud {
+    0% {
+      transform: translateX(0);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
+  }
+
+  @keyframes sparkle {
+    0%, 100% {
+      transform: scale(0.8) rotate(0deg);
+      opacity: 0.5;
+    }
+    50% {
+      transform: scale(1.2) rotate(180deg);
+      opacity: 1;
+    }
+  }
+
+  .animate-paw-left {
+    animation: pawSwingLeft 0.38s infinite ease-in-out;
+  }
+
+  .animate-paw-right {
+    animation: pawSwingRight 0.38s infinite ease-in-out;
+  }
+
+  .animate-bounce-subtle {
+    animation: walkingBob 0.38s infinite ease-in-out;
+  }
+
+  .animate-head-bob {
+    animation: headBob 0.38s infinite ease-in-out;
+  }
+
+  .animate-sparkle {
+    animation: sparkle 2s infinite ease-in-out;
+  }
+}
+
