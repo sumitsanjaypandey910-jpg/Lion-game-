@@ -93,14 +93,12 @@ export const MemoryMatchGame: React.FC<MemoryMatchGameProps> = ({
         newCards[secondIdx].isMatched = true;
         setCards(newCards);
         setFlippedIndices([]);
-        setMatchesCount((c) => {
-          const nextCount = c + 1;
-          if (nextCount === 6) {
-            // GAME WON!
-            handleGameWon();
-          }
-          return nextCount;
-        });
+        const nextCount = matchesCount + 1;
+        setMatchesCount(nextCount);
+        if (nextCount === 6) {
+          // GAME WON!
+          handleGameWon();
+        }
       } else {
         // NO MATCH -> Flip back after delay
         sounds.playRetry();
@@ -139,6 +137,7 @@ export const MemoryMatchGame: React.FC<MemoryMatchGameProps> = ({
               sounds.playClick();
               onBackToWalk();
             }}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1.5 px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold rounded-xl transition cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -164,6 +163,7 @@ export const MemoryMatchGame: React.FC<MemoryMatchGameProps> = ({
           <button
             id="reset-memory-btn"
             onClick={initializeGame}
+            onMouseEnter={() => sounds.playHover()}
             className="p-2 bg-amber-100 hover:bg-amber-200 text-amber-900 rounded-xl transition cursor-pointer"
             title="Shuffle & Restart"
           >
@@ -187,6 +187,7 @@ export const MemoryMatchGame: React.FC<MemoryMatchGameProps> = ({
           <button
             id="play-again-memory-btn"
             onClick={initializeGame}
+            onMouseEnter={() => sounds.playHover()}
             className="px-4 py-2 bg-white text-emerald-800 font-black text-xs rounded-xl shadow hover:bg-emerald-50 transition cursor-pointer whitespace-nowrap"
           >
             Play Again ↺
@@ -201,6 +202,7 @@ export const MemoryMatchGame: React.FC<MemoryMatchGameProps> = ({
             key={card.id}
             id={`mem-card-${idx}`}
             onClick={() => handleCardClick(idx)}
+            onMouseEnter={() => sounds.playHover()}
             className={`aspect-square rounded-2xl flex flex-col items-center justify-center p-2 transition-all duration-300 transform select-none cursor-pointer border-2 ${
               card.isMatched
                 ? 'bg-emerald-50 border-emerald-400 opacity-90 scale-95 shadow-inner'

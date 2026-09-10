@@ -84,6 +84,7 @@ export const PhotoDetectiveGame: React.FC<PhotoDetectiveGameProps> = ({
               sounds.playClick();
               onBackToWalk();
             }}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1.5 px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold rounded-xl transition cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -154,6 +155,7 @@ export const PhotoDetectiveGame: React.FC<PhotoDetectiveGameProps> = ({
           <button
             id="animal-sound-btn"
             onClick={handleHearCall}
+            onMouseEnter={() => sounds.playHover()}
             className="mt-4 flex items-center gap-2 px-4 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-extrabold text-xs rounded-xl transition cursor-pointer border border-amber-300"
           >
             <Volume2 className="w-4 h-4 text-amber-700" />
@@ -202,6 +204,7 @@ export const PhotoDetectiveGame: React.FC<PhotoDetectiveGameProps> = ({
                       key={opt.id}
                       id={`photo-opt-${opt.id}`}
                       onClick={() => handleSelectOption(opt.id)}
+                      onMouseEnter={() => sounds.playHover()}
                       className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 font-black text-sm sm:text-base transition cursor-pointer ${btnStyle}`}
                     >
                       <span className="text-3xl">{opt.emoji}</span>
@@ -240,6 +243,7 @@ export const PhotoDetectiveGame: React.FC<PhotoDetectiveGameProps> = ({
                     <button
                       id="next-photo-item-btn"
                       onClick={handleNextItem}
+                      onMouseEnter={() => sounds.playHover()}
                       className="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl shadow transition cursor-pointer"
                     >
                       Next Animal ➔

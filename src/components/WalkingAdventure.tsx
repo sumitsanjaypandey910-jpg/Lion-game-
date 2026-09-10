@@ -21,10 +21,10 @@ interface WalkingAdventureProps {
   milestones: Milestone[];
   onOpenGame: (game: GameScreen) => void;
   onItemCollected: (type: 'paw' | 'star' | 'mango' | 'flower') => void;
+  onMilestoneReached?: (milestone: Milestone) => void;
+  onEndReached?: () => void;
   distance: number;
   setDistance: React.Dispatch<React.SetStateAction<number>>;
-  lionState: LionAnimationState;
-  setLionState: React.Dispatch<React.SetStateAction<LionAnimationState>>;
   stars: number;
   coins: number;
 }
@@ -33,13 +33,14 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
   milestones,
   onOpenGame,
   onItemCollected,
+  onMilestoneReached,
+  onEndReached,
   distance,
   setDistance,
-  lionState,
-  setLionState,
   stars,
   coins,
 }) => {
+  const [lionState, setLionState] = useState<LionAnimationState>('idle');
   const [direction, setDirection] = useState<'left' | 'right'>('right');
   const [autoWalk, setAutoWalk] = useState<boolean>(false);
   const [speed, setSpeed] = useState<'normal' | 'fast'>('normal');
@@ -47,6 +48,8 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
   const [lionY, setLionY] = useState<number>(0);
   const [activeFriendGreeting, setActiveFriendGreeting] = useState<{ name: string; text: string } | null>(null);
   const [activeMilestonePrompt, setActiveMilestonePrompt] = useState<Milestone | null>(null);
+  const [celebratedMilestones, setCelebratedMilestones] = useState<string[]>([]);
+  const [hasReachedEnd, setHasReachedEnd] = useState<boolean>(false);
 
   // Generate collectibles scattered along the path
   const [collectibles, setCollectibles] = useState<CollectibleItem[]>([
@@ -113,21 +116,21 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
 
   // Check collision with items and milestones as distance changes
   useEffect(() => {
-    // Check item pickup
-    setCollectibles((items) =>
-      items.map((it) => {
-        if (!it.collected && Math.abs(it.x - distance) < 18) {
-          // If item is elevated, require jump
-          if (it.y > 30 && lionY < 20) {
-            return it;
-          }
-          sounds.playCollect();
-          onItemCollected(it.type);
-          return { ...it, collected: true };
-        }
-        return it;
-      })
+    // Check item pickup cleanly outside of setState updaters
+    const newlyCollected = collectibles.filter(
+      (it) => !it.collected && Math.abs(it.x - distance) < 18 && (it.y <= 30 || lionY >= 20)
     );
+
+    if (newlyCollected.length > 0) {
+      const hitIds = new Set(newlyCollected.map((c) => c.id));
+      setCollectibles((prev) =>
+        prev.map((it) => (hitIds.has(it.id) ? { ...it, collected: true } : it))
+      );
+      newlyCollected.forEach((it) => {
+        sounds.playCollect();
+        onItemCollected(it.type);
+      });
+    }
 
     // Check safari animal friends greetings
     const nearFriend = SAFARI_FRIENDS.find((f) => Math.abs(f.x - distance) < 28);
@@ -141,13 +144,26 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
     const hitMilestone = milestones.find(
       (m) => Math.abs(m.distance - distance) < 15 && !m.completed
     );
-    if (hitMilestone && !activeMilestonePrompt) {
-      sounds.playSuccess();
+    if (hitMilestone && !activeMilestonePrompt && !celebratedMilestones.includes(hitMilestone.id)) {
+      setCelebratedMilestones((prev) => [...prev, hitMilestone.id]);
       setAutoWalk(false);
       setLionState('celebrate');
       setActiveMilestonePrompt(hitMilestone);
+      if (onMilestoneReached) {
+        onMilestoneReached(hitMilestone);
+      } else {
+        sounds.playMilestoneFanfare();
+      }
     }
-  }, [distance, lionY]);
+
+    // Check if reached ultimate Crown Oasis (800m)
+    if (distance >= 795 && !hasReachedEnd) {
+      setHasReachedEnd(true);
+      setAutoWalk(false);
+      setLionState('celebrate');
+      onEndReached?.();
+    }
+  }, [distance, lionY, milestones, activeMilestonePrompt, collectibles, onItemCollected, celebratedMilestones, hasReachedEnd, onMilestoneReached, onEndReached]);
 
   const walkForward = () => {
     setDirection('right');
@@ -236,6 +252,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
                   sounds.playClick();
                   onOpenGame(m.game);
                 }}
+                onMouseEnter={() => sounds.playHover()}
                 className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs transition cursor-pointer ${
                   distance >= m.distance
                     ? 'bg-amber-100 text-amber-900 border border-amber-300 hover:bg-amber-200'
@@ -345,6 +362,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
                 sounds.playSuccess();
                 setActiveFriendGreeting({ name: f.name, text: `${f.greeting} ${f.reaction}` });
               }}
+              onMouseEnter={() => sounds.playHover()}
               title={`Tap ${f.name}!`}
             >
               <span className="text-5xl filter drop-shadow-md animate-bounce-subtle">
@@ -374,6 +392,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
                   sounds.playClick();
                   onOpenGame(m.game);
                 }}
+                onMouseEnter={() => sounds.playHover()}
                 className="bg-white/95 border-3 border-amber-400 p-2.5 rounded-2xl shadow-xl flex flex-col items-center text-center cursor-pointer hover:scale-105 transition transform animate-pulse"
               >
                 <div className="text-2xl">
@@ -505,6 +524,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
                     setActiveMilestonePrompt(null);
                     setLionState('idle');
                   }}
+                  onMouseEnter={() => sounds.playHover()}
                   className="flex-1 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold text-xs rounded-xl cursor-pointer transition"
                 >
                   Keep Walking 🐾
@@ -518,6 +538,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
                     setActiveMilestonePrompt(null);
                     onOpenGame(g);
                   }}
+                  onMouseEnter={() => sounds.playHover()}
                   className="flex-1 py-2.5 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-black text-xs rounded-xl shadow-md cursor-pointer transition flex items-center justify-center gap-1"
                 >
                   <span>Play Game!</span>
@@ -536,6 +557,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
           <button
             id="walk-left-btn"
             onClick={walkBackward}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1.5 px-4 py-3 bg-amber-100 hover:bg-amber-200 active:scale-95 text-amber-950 font-black text-sm rounded-2xl border-2 border-amber-300 shadow-sm cursor-pointer transition"
           >
             <ArrowLeft className="w-5 h-5 text-amber-700" />
@@ -545,6 +567,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
           <button
             id="walk-right-btn"
             onClick={walkForward}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1.5 px-5 py-3 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 active:scale-95 text-white font-black text-sm rounded-2xl shadow-md cursor-pointer transition"
           >
             <span>Walk Forward</span>
@@ -557,6 +580,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
           <button
             id="jump-btn"
             onClick={jump}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1.5 px-4 py-3 bg-sky-100 hover:bg-sky-200 active:scale-95 text-sky-950 font-black text-sm rounded-2xl border-2 border-sky-300 shadow-sm cursor-pointer transition"
           >
             <span className="text-lg">⬆️</span>
@@ -566,6 +590,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
           <button
             id="roar-btn"
             onClick={roar}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1.5 px-4 py-3 bg-rose-100 hover:bg-rose-200 active:scale-95 text-rose-950 font-black text-sm rounded-2xl border-2 border-rose-300 shadow-sm cursor-pointer transition"
           >
             <span className="text-lg">🦁</span>
@@ -581,6 +606,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
               sounds.playClick();
               setAutoWalk((w) => !w);
             }}
+            onMouseEnter={() => sounds.playHover()}
             className={`flex items-center gap-1.5 px-3 py-2.5 rounded-2xl font-black text-xs transition cursor-pointer border-2 ${
               autoWalk
                 ? 'bg-emerald-500 text-white border-emerald-600 shadow-md'
@@ -597,6 +623,7 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
               sounds.playClick();
               setSpeed((s) => (s === 'normal' ? 'fast' : 'normal'));
             }}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1 px-3 py-2.5 bg-amber-50 hover:bg-amber-100 text-amber-900 border border-amber-300 rounded-2xl font-black text-xs transition cursor-pointer"
           >
             <Flame className="w-4 h-4 text-orange-500" />

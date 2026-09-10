@@ -202,6 +202,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
               sounds.playClick();
               onBackToWalk();
             }}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1.5 px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold rounded-xl transition cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -228,6 +229,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
                 sounds.playClick();
                 setSelectedTemplate(tmpl);
               }}
+              onMouseEnter={() => sounds.playHover()}
               className={`flex items-center gap-1.5 px-3 py-1.5 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap transition cursor-pointer ${
                 selectedTemplate.id === tmpl.id
                   ? 'bg-amber-500 text-white shadow-md'
@@ -314,6 +316,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
             <button
               id="undo-color-btn"
               onClick={handleUndo}
+              onMouseEnter={() => sounds.playHover()}
               disabled={history.length === 0}
               className="flex items-center gap-1 px-3 py-1.5 bg-slate-100 hover:bg-slate-200 disabled:opacity-40 text-slate-700 font-bold text-xs rounded-xl transition cursor-pointer"
             >
@@ -324,6 +327,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
             <button
               id="clear-color-btn"
               onClick={handleReset}
+              onMouseEnter={() => sounds.playHover()}
               className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold text-xs rounded-xl border border-rose-200 transition cursor-pointer"
             >
               Clear All
@@ -332,6 +336,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
             <button
               id="show-lion-celebrate-btn"
               onClick={handleShowToLion}
+              onMouseEnter={() => sounds.playHover()}
               className="flex items-center gap-1.5 px-4 py-2 bg-gradient-to-r from-amber-500 to-orange-500 hover:from-amber-600 hover:to-orange-600 text-white font-extrabold text-sm rounded-xl shadow-md transition transform hover:scale-105 cursor-pointer"
             >
               <Sparkles className="w-4 h-4" />
@@ -352,6 +357,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
                   sounds.playClick();
                   setMode('fill');
                 }}
+                onMouseEnter={() => sounds.playHover()}
                 className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl font-bold text-xs gap-1 transition cursor-pointer ${
                   mode === 'fill'
                     ? 'bg-amber-500 text-white shadow'
@@ -368,6 +374,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
                   sounds.playClick();
                   setMode('brush');
                 }}
+                onMouseEnter={() => sounds.playHover()}
                 className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl font-bold text-xs gap-1 transition cursor-pointer ${
                   mode === 'brush'
                     ? 'bg-amber-500 text-white shadow'
@@ -384,6 +391,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
                   sounds.playClick();
                   setMode('sticker');
                 }}
+                onMouseEnter={() => sounds.playHover()}
                 className={`flex flex-col items-center justify-center py-2.5 px-2 rounded-xl font-bold text-xs gap-1 transition cursor-pointer ${
                   mode === 'sticker'
                     ? 'bg-amber-500 text-white shadow'
@@ -422,6 +430,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
                       sounds.playClick();
                       setSelectedSticker(st);
                     }}
+                    onMouseEnter={() => sounds.playHover()}
                     className={`w-9 h-9 text-lg rounded-xl flex items-center justify-center transition cursor-pointer ${
                       selectedSticker === st ? 'bg-amber-200 ring-2 ring-amber-500 scale-110' : 'bg-slate-100 hover:bg-slate-200'
                     }`}
@@ -456,6 +465,7 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
                     sounds.playClick();
                     setActiveColor(c);
                   }}
+                  onMouseEnter={() => sounds.playHover()}
                   className={`w-9 h-9 rounded-xl border-2 transition-transform cursor-pointer shadow-sm ${
                     activeColor.toLowerCase() === c.toLowerCase()
                       ? 'scale-115 ring-2 ring-slate-800 border-white z-10'

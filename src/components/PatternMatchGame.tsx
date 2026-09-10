@@ -100,6 +100,7 @@ export const PatternMatchGame: React.FC<PatternMatchGameProps> = ({
               sounds.playClick();
               onBackToWalk();
             }}
+            onMouseEnter={() => sounds.playHover()}
             className="flex items-center gap-1.5 px-3 py-2 bg-amber-100 hover:bg-amber-200 text-amber-900 font-bold rounded-xl transition cursor-pointer"
           >
             <ArrowLeft className="w-5 h-5" />
@@ -126,6 +127,7 @@ export const PatternMatchGame: React.FC<PatternMatchGameProps> = ({
               setIsCorrect(null);
               setFeedbackMessage('');
             }}
+            onMouseEnter={() => sounds.playHover()}
             className={`px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer ${
               tab === 'skin_pattern'
                 ? 'bg-amber-500 text-white shadow-sm'
@@ -143,6 +145,7 @@ export const PatternMatchGame: React.FC<PatternMatchGameProps> = ({
               setIsCorrect(null);
               setFeedbackMessage('');
             }}
+            onMouseEnter={() => sounds.playHover()}
             className={`px-3 py-1.5 rounded-lg font-bold text-xs sm:text-sm transition cursor-pointer ${
               tab === 'sequence'
                 ? 'bg-amber-500 text-white shadow-sm'
@@ -217,6 +220,7 @@ export const PatternMatchGame: React.FC<PatternMatchGameProps> = ({
                       key={opt.id}
                       id={`pattern-opt-${opt.id}`}
                       onClick={() => handleSelectOption(opt.id)}
+                      onMouseEnter={() => sounds.playHover()}
                       className={`flex items-center gap-3 p-3.5 rounded-2xl border-2 font-black text-sm sm:text-base transition cursor-pointer ${btnStyle}`}
                     >
                       <span className="text-3xl filter drop-shadow-sm">{opt.emoji}</span>
@@ -250,6 +254,7 @@ export const PatternMatchGame: React.FC<PatternMatchGameProps> = ({
                     <button
                       id="next-pattern-btn"
                       onClick={handleNextQuestion}
+                      onMouseEnter={() => sounds.playHover()}
                       className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow cursor-pointer transition whitespace-nowrap"
                     >
                       Next Pattern ➔
@@ -337,6 +342,7 @@ export const PatternMatchGame: React.FC<PatternMatchGameProps> = ({
                   key={opt.id}
                   id={`seq-opt-${opt.id}`}
                   onClick={() => handleSequenceOption(opt.id)}
+                  onMouseEnter={() => sounds.playHover()}
                   className={`p-3 rounded-2xl border-2 flex flex-col items-center justify-center gap-1 transition cursor-pointer ${
                     selectedOption === opt.id
                       ? isCorrect
@@ -367,6 +373,7 @@ export const PatternMatchGame: React.FC<PatternMatchGameProps> = ({
                   <button
                     id="next-seq-btn"
                     onClick={handleNextSequence}
+                    onMouseEnter={() => sounds.playHover()}
                     className="px-4 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-black rounded-xl shadow cursor-pointer"
                   >
                     Next ➔
