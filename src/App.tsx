@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useCallback, useEffect } from 'react';
+import React, { useState, useCallback, useEffect, useRef } from 'react';
 import { GameScreen, Milestone } from './types';
 import { INITIAL_MILESTONES } from './data/gameData';
 import { NavigationHeader } from './components/NavigationHeader';
@@ -84,6 +84,23 @@ export default function App() {
   const [playTimeSeconds, setPlayTimeSeconds] = useState<number>(0);
   const [timesPlayed, setTimesPlayed] = useState<number>(1);
 
+  // Refs for stabilizing callbacks against 1s interval timer changes
+  const playTimeRef = useRef<number>(0);
+  const timesPlayedRef = useRef<number>(1);
+  const celebratedCoinTiersRef = useRef<number[]>([]);
+
+  useEffect(() => {
+    playTimeRef.current = playTimeSeconds;
+  }, [playTimeSeconds]);
+
+  useEffect(() => {
+    timesPlayedRef.current = timesPlayed;
+  }, [timesPlayed]);
+
+  useEffect(() => {
+    celebratedCoinTiersRef.current = celebratedCoinTiers;
+  }, [celebratedCoinTiers]);
+
   // Live Adventure Play Session Timer
   useEffect(() => {
     const timer = setInterval(() => {
@@ -95,7 +112,7 @@ export default function App() {
   const checkCoinMilestones = useCallback((newTotalCoins: number) => {
     // Find uncelebrated tier reached
     const eligibleTier = COIN_MILESTONE_TIERS.find(
-      (t) => newTotalCoins >= t.threshold && !celebratedCoinTiers.includes(t.threshold)
+      (t) => newTotalCoins >= t.threshold && !celebratedCoinTiersRef.current.includes(t.threshold)
     );
 
     if (eligibleTier) {
@@ -113,11 +130,11 @@ export default function App() {
         emoji: eligibleTier.emoji,
         bonusStars: eligibleTier.bonusStars,
         bonusCoins: eligibleTier.bonusCoins,
-        playTimeSeconds,
-        timesPlayed,
+        playTimeSeconds: playTimeRef.current,
+        timesPlayed: timesPlayedRef.current,
       });
     }
-  }, [celebratedCoinTiers, playTimeSeconds, timesPlayed]);
+  }, []);
 
   const handleOpenGame = useCallback((game: GameScreen) => {
     sounds.playClick();
@@ -154,15 +171,15 @@ export default function App() {
         emoji: '🌟',
         bonusStars: starsEarned,
         bonusCoins: coinsEarned,
-        playTimeSeconds,
-        timesPlayed,
+        playTimeSeconds: playTimeRef.current,
+        timesPlayed: timesPlayedRef.current,
         actionText: 'Return to Safari Trail 🐾',
         onAction: () => {
           setCurrentScreen('walking');
         },
       });
     }
-  }, [currentScreen, milestones, checkCoinMilestones, playTimeSeconds, timesPlayed]);
+  }, [currentScreen, milestones, checkCoinMilestones]);
 
   const handleItemCollected = useCallback((type: 'paw' | 'star' | 'mango' | 'flower') => {
     if (type === 'star') {
@@ -187,8 +204,8 @@ export default function App() {
       emoji: m.game === 'coloring' ? '🎨' : m.game === 'pattern' ? '🧩' : m.game === 'photo' ? '📸' : '🧠',
       bonusStars: 3,
       bonusCoins: 15,
-      playTimeSeconds,
-      timesPlayed: timesPlayed + 1,
+      playTimeSeconds: playTimeRef.current,
+      timesPlayed: timesPlayedRef.current + 1,
       actionText: `Play ${m.title}!`,
       onAction: () => {
         setCurrentScreen(m.game);
@@ -200,7 +217,7 @@ export default function App() {
       checkCoinMilestones(nextCoins);
       return nextCoins;
     });
-  }, [checkCoinMilestones, playTimeSeconds, timesPlayed]);
+  }, [checkCoinMilestones]);
 
   const handleEndReached = useCallback(() => {
     setTimesPlayed((t) => t + 1);
@@ -212,8 +229,8 @@ export default function App() {
       emoji: '🦁',
       bonusStars: 10,
       bonusCoins: 50,
-      playTimeSeconds,
-      timesPlayed: timesPlayed + 1,
+      playTimeSeconds: playTimeRef.current,
+      timesPlayed: timesPlayedRef.current + 1,
       actionText: 'Celebrate with Baby Lion! 🐾',
       onAction: () => {
         sounds.playCelebrationWithBabySound();
@@ -225,7 +242,7 @@ export default function App() {
       checkCoinMilestones(nextCoins);
       return nextCoins;
     });
-  }, [checkCoinMilestones, playTimeSeconds, timesPlayed]);
+  }, [checkCoinMilestones]);
 
   return (
     <div className="min-h-screen flex flex-col bg-amber-50/60 font-['Nunito',sans-serif] text-slate-800">

@@ -45,7 +45,6 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
   const [partColors, setPartColors] = useState<Record<string, string>>({});
   const [history, setHistory] = useState<Record<string, string>[]>([]);
   const [lionCheer, setLionCheer] = useState<boolean>(false);
-  const [showCelebration, setShowCelebration] = useState<boolean>(false);
 
   // Freehand drawing canvas
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -178,7 +177,6 @@ export const ColoringGame: React.FC<ColoringGameProps> = ({
     sounds.playSuccess();
     sounds.playRoar();
     setLionCheer(true);
-    setShowCelebration(true);
     confetti({
       particleCount: 80,
       spread: 70,
