@@ -349,15 +349,15 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
 
         {/* Safari Animal Friends Stationed along the Trail */}
         {SAFARI_FRIENDS.map((f) => {
-          // Calculate screen position relative to lion camera
-          const relativeX = (f.x - distance) * 4 + 350;
-          if (relativeX < -150 || relativeX > 1100) return null;
+          // Calculate screen position relative to lion at center (50%)
+          const diffX = (f.x - distance) * 4;
+          if (diffX < -900 || diffX > 900) return null;
 
           return (
             <div
               key={f.id}
-              className="absolute bottom-24 flex flex-col items-center cursor-pointer transform hover:scale-110 transition duration-200 z-10"
-              style={{ left: `${relativeX}px` }}
+              className="absolute bottom-24 flex flex-col items-center cursor-pointer -translate-x-1/2 hover:scale-110 transition duration-200 z-10"
+              style={{ left: `calc(50% + ${diffX}px)` }}
               onClick={() => {
                 sounds.playSuccess();
                 setActiveFriendGreeting({ name: f.name, text: `${f.greeting} ${f.reaction}` });
@@ -377,14 +377,14 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
 
         {/* Milestone Station Gates along the Trail */}
         {milestones.map((m) => {
-          const relativeX = (m.distance - distance) * 4 + 350;
-          if (relativeX < -200 || relativeX > 1100) return null;
+          const diffX = (m.distance - distance) * 4;
+          if (diffX < -1000 || diffX > 1000) return null;
 
           return (
             <div
               key={m.id}
-              className="absolute bottom-20 flex flex-col items-center z-15"
-              style={{ left: `${relativeX}px` }}
+              className="absolute bottom-20 flex flex-col items-center -translate-x-1/2 z-15"
+              style={{ left: `calc(50% + ${diffX}px)` }}
             >
               {/* Gate Arch */}
               <div
@@ -419,8 +419,8 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
         {/* Collectible Paw Coins / Mangoes / Stars */}
         {collectibles.map((item) => {
           if (item.collected) return null;
-          const relativeX = (item.x - distance) * 4 + 350;
-          if (relativeX < -50 || relativeX > 1050) return null;
+          const diffX = (item.x - distance) * 4;
+          if (diffX < -900 || diffX > 900) return null;
 
           let icon = '🐾';
           if (item.type === 'star') icon = '⭐';
@@ -430,9 +430,9 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
           return (
             <div
               key={item.id}
-              className="absolute text-2xl sm:text-3xl filter drop-shadow-md animate-bounce cursor-pointer z-10 select-none"
+              className="absolute text-2xl sm:text-3xl filter drop-shadow-md animate-bounce -translate-x-1/2 cursor-pointer z-10 select-none"
               style={{
-                left: `${relativeX}px`,
+                left: `calc(50% + ${diffX}px)`,
                 bottom: `${95 + item.y}px`,
               }}
               onClick={() => {
@@ -463,18 +463,19 @@ export const WalkingAdventure: React.FC<WalkingAdventureProps> = ({
           </div>
         </div>
 
-        {/* THE BABY LION CUB (Centered along the screen with jump offset) */}
+        {/* THE BABY LION CUB (Always centered horizontally on screen, with jumping and walking animations) */}
         <div
-          className="absolute z-20 transition-all duration-75"
+          className="absolute z-20 transition-all duration-75 flex items-center justify-center pointer-events-auto"
           style={{
-            left: '350px',
+            left: '50%',
+            transform: 'translateX(-50%)',
             bottom: `${85 + lionY}px`,
           }}
         >
           <BabyLion
             state={lionState}
             direction={direction}
-            scale={0.9}
+            scale={0.95}
             onClick={roar}
           />
         </div>

@@ -53,17 +53,17 @@ export const BabyLion: React.FC<BabyLionProps> = ({
     <div
       id="baby-lion-character"
       onClick={onClick}
-      className={`relative inline-block select-none cursor-pointer transition-transform duration-200 ${className}`}
+      className={`relative inline-flex flex-col items-center justify-end select-none cursor-pointer transition-transform duration-200 ${className}`}
       style={{
-        transform: `scaleX(${direction === 'left' ? -scale : scale}) scaleY(${scale})`,
-        transformOrigin: 'bottom center',
+        width: `${180 * scale}px`,
+        height: `${190 * scale}px`,
       }}
       title="Tap me to hear my roar!"
     >
       {/* Visual celebration particles / roar shockwaves */}
       {isRoaring && (
         <div className="absolute -top-10 left-1/2 -translate-x-1/2 flex items-center gap-1.5 animate-bounce z-20 pointer-events-none">
-          <span className="bg-amber-500 text-white font-black text-xs px-2.5 py-1 rounded-full shadow-md border-2 border-amber-300 tracking-wider">
+          <span className="bg-amber-500 text-white font-black text-xs px-2.5 py-1 rounded-full shadow-md border-2 border-amber-300 tracking-wider whitespace-nowrap">
             ROAAAR! 🦁✨
           </span>
         </div>
@@ -80,11 +80,16 @@ export const BabyLion: React.FC<BabyLionProps> = ({
       {/* SVG Cartoon Baby Lion closely matching the user's reference photo */}
       <svg
         viewBox="0 0 240 250"
-        width={180 * scale}
-        height={187.5 * scale}
+        width="100%"
+        height="100%"
         className={`overflow-visible filter drop-shadow-md ${
           isWalking ? 'animate-bounce-subtle' : ''
         } ${isJumping ? '-translate-y-8 transition-transform duration-300' : ''}`}
+        style={{
+          transform: direction === 'left' ? 'scaleX(-1)' : 'none',
+          transformOrigin: '120px 125px',
+          transition: 'transform 0.2s ease-out',
+        }}
       >
         <defs>
           {/* Gradients for rich cartoon depth */}
